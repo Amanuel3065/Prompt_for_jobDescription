@@ -25,7 +25,7 @@
 
 ---
 
-* <mark> This projects aims to provide custom FastAPIs with two ends. One of the ends gives scores to news and the other extracts features from job descriptions using prompts. It utilizes Co:here NLP toolkit which provides LLM. </mark>
+* <mark> This projects aims to provide a custom API with two ends. One of the ends gives scores to news and the other extracts features from job descriptions using prompts. It utilizes Co:here NLP toolkit which provides LLM. </mark>
 
 ---
 
