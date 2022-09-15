@@ -1,16 +1,10 @@
 
-<p float = "left">
-    <img src="data/10Acad.jpg" 
-     alt="10"
-     style="float: left; margin-right: 1px;" 
-    />
-    <img src="data/cohere.png" 
+# Prompt_for_jobDescription
+
+<img src="data/cohere.png" 
      alt="coh"
      style="float: left; margin-right: 1px;" 
     />
-</p>
-
-# Prompt_for_jobDescription
 
 ### Description
 
