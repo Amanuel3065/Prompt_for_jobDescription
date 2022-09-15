@@ -2,11 +2,11 @@
 <p float = "left">
     <img src="data/10Acad.jpg" 
      alt="10"
-     style="float: left; margin-right: 10px;" 
+     style="float: left; margin-right: 1px;" 
     />
     <img src="data/cohere.png" 
      alt="coh"
-     style="float: left; margin-right: 10px;" 
+     style="float: left; margin-right: 1px;" 
     />
 </p>
 
