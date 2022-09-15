@@ -1,6 +1,6 @@
 
 <p float = "left">
-    <img src="data/10Acad.png" 
+    <img src="data/10Acad.jpg" 
      alt="10"
      style="float: left; margin-right: 10px;" 
     />
