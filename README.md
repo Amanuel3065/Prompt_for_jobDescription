@@ -31,7 +31,7 @@
 
 ## INSTALLATION GUIDE
 
-* git clone https://github.com/Amanuel3065/pharmaceutical_sales_prediction
-* cd pharmaceutical_sales_prediction
+* git clone https://github.com/Amanuel3065/Prompt_for_jobDescription
+* cd Prompt_for_jobDescription
 * pip install -r requirements.txt 
 
