@@ -112,3 +112,10 @@ dvc==2.10.2
 dvc-render==0.0.5        
 dvclive==0.8.1 
 
+cohere==2.2.5
+Flask==2.2.2
+huggingface-hub==0.9.1
+numpy==1.23.3
+requests==2.28.1
+transformers==4.22.0
+
