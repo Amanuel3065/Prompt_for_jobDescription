@@ -1,3 +1,0 @@
-"""Api secret keys."""
-
-cohere_api = {"api_key": "EzwQ0lxaZBzWYdYKwJOYEiTUBzwW5OkQ9R0JaglE"}
