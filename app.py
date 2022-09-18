@@ -1,4 +1,4 @@
-
+from crypt import methods
 from enum import unique
 import os
 import sys
@@ -7,29 +7,32 @@ import random
 import cohere
 from flask import Flask, request, jsonify, render_template
 
+sys.path.append(os.path.abspath(os.path.join('..')))
 import creds
 
+api_key = creds.api_key
+
 # cohere class instance
-co = cohere.Client(creds.api_key)
+co = cohere.Client(api_key)
 
 # create an instance of the Flask class
-app = Flask(__name__, template_folder='template')
-
-"""@app.route('/')
-@app.route('/api')
-def home():
-    """"""
-    # Main page
-    return render_template('index.html')
-"""
+app = Flask(__name__)
 
 # list if items
 items = [{"item": "item1"}, {"item": "item2"}]
 
-
+@app.route('/')
+def index():
+    """Render the index page."""
+    # Main page
+    return jsonify({
+                "status": "success",
+                "message": "Hello, world!"
+             })
 
 # This is a simple placeholder for eccomerce, to make it dynamic we need to use a dictionary for different types of items and use the examples based on the item type
-descs = [{"document": "Bachelor's degree in Mechanical Engineering or Physical Science 3+ years track record of developing or specifying fiber optic cables and connector related products Knowledge of fiber optic component, cabling, and interconnect products, technologies, and standards Experience in statistical data analysis Experience with product life cycle management (PLM) process Experience providing solutions to problems and meeting deadlines Experience engaging stakeholders PREFERRED Advanced degree Experience using a software tool for statistical data analysis such as JMP Experience using Agile as product life-cycle management tool Data center or other mission critical development experience",
+descs = [{
+    "document": "Bachelor's degree in Mechanical Engineering or Physical Science 3+ years track record of developing or specifying fiber optic cables and connector related products Knowledge of fiber optic component, cabling, and interconnect products, technologies, and standards Experience in statistical data analysis Experience with product life cycle management (PLM) process Experience providing solutions to problems and meeting deadlines Experience engaging stakeholders PREFERRED Advanced degree Experience using a software tool for statistical data analysis such as JMP Experience using Agile as product life-cycle management tool Data center or other mission critical development experience",
     "tokens": [
       {
         "text": "Bachelor",
@@ -180,46 +183,27 @@ descs = [{"document": "Bachelor's degree in Mechanical Engineering or Physical S
       { "child": 95, "head": 77, "relationLabel": "EXPERIENCE_IN" },
       { "child": 57, "head": 53, "relationLabel": "DEGREE_IN" }
     ]
-  }]
+  }
+]
 
 
-@app.route('/', methods=['GET', 'POST'])
-def description_route():
-    """description route."""
-    if request.method == 'GET':
-        # push the item to the list
-        items.append(request.get_json())
-        # return the created item
-        return jsonify({
-            "status": "success",
-            "item": request.get_json()
-        })
-        # return jsonify({"status": "success", "message": "Post item!"})
-    elif request.method == 'POST':
-        # return generated description
-        # response = co.generate(
-        #     model='xlarge',
-        #     prompt='Company: Casper\nProduct Name: The Wave Hybrid\nWhat is it: A mattress to improve sleep quality\nWhy is it unique: It helps with back problems\nDescription: We\'ve got your back. Literally, improving the quality of your sleep is our number one priority. We recommend checking out our Wave Hybrid mattress as it is designed specifically to provide support and pain relief.\n--SEPARATOR--\nCompany: Glossier\nProduct Name: The Beauty Bag\nWhat is it: A makeup bag\nWhy is it unique: It can hold all your essentials but also fit into your purse\nDescription: Give a very warm welcome to the newest member of the Glossier family - the Beauty Bag!! It\'s the ultimate home for your routine, with serious attention to detail. See the whole shebang on Glossier.\n--SEPARATOR--\nCompany: Cohere\nProduct Name: The FastMile\nWhat is it: A running shoe\nWhy is it unique: It\'s designed for long-distance running\nDescription:',
-        #     max_tokens=50,
-        #     temperature=0.9,
-        #     k=0,
-        #     p=0.75,
-        #     frequency_penalty=0,
-        #     presence_penalty=0,
-        #     stop_sequences=["--SEPARATOR--"],
-        #     return_likelihoods='NONE'
-        # )
+@app.route('/jdentities', methods = ['GET','POST'])
 
-        description = request.form.get('Description')
+def description_route():      
+    
+
+        #document = request.get_json()['document']
+        #tokens = request.get_json()['tokens']
+        #relations = request.get_json()['relations']
         
-
+        user_input = request.get_json('Description')
         # construct final string from input
-        final = f"Company: {description}"
-
+        final = f"document: {user_input}\ntokens:"
+        
         response = co.generate(
             model='xlarge',
             # based on the item type, we can use the examples from the list, but for now we will use the same example
-            prompt=descs[0] + descs[1] + final,
+            prompt= descs[0] + descs[1] + final,
             max_tokens=50,
             temperature=0.9,
             k=0,
@@ -229,15 +213,14 @@ def description_route():
             stop_sequences=["--SEPARATOR--"],
             return_likelihoods='NONE'
         )
-
+        
         res = response.generations[0].text
         # remove --SEPARATOR-- if x contains it
         if '--SEPARATOR--' in res:
             res = res.replace('--SEPARATOR--', '')
-
-        return jsonify({"status": "success", "brand_description": res})
+        
+        return jsonify({"status": "success", "job entities": res})
         # return jsonify({"status": "sucess", "message": "Get Route for items!"})
-
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 33507))
