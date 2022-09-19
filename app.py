@@ -1,4 +1,4 @@
-from crypt import methods
+#from crypt import methods
 from enum import unique
 import os
 import sys
@@ -6,6 +6,7 @@ import random
 
 import cohere
 from flask import Flask, request, jsonify, render_template
+from prompt_toolkit import prompt
 
 sys.path.append(os.path.abspath(os.path.join('..')))
 import creds
@@ -21,14 +22,12 @@ app = Flask(__name__)
 # list if items
 items = [{"item": "item1"}, {"item": "item2"}]
 
-@app.route('/')
-def index():
-    """Render the index page."""
+#@app.route('/')
+#def home():
+    
     # Main page
-    return jsonify({
-                "status": "success",
-                "message": "Hello, world!"
-             })
+    #user_input = request.get_json('Description')
+    #return render_template('index.html')
 
 # This is a simple placeholder for eccomerce, to make it dynamic we need to use a dictionary for different types of items and use the examples based on the item type
 descs = [{
@@ -187,7 +186,7 @@ descs = [{
 ]
 
 
-@app.route('/jdentities', methods = ['GET','POST'])
+@app.route('/', methods = ['GET','POST'])
 
 def description_route():      
     
@@ -196,14 +195,18 @@ def description_route():
         #tokens = request.get_json()['tokens']
         #relations = request.get_json()['relations']
         
-        user_input = request.get_json('Description')
-        # construct final string from input
-        final = f"document: {user_input}\ntokens:"
         
+        # construct final string from input
+        user_input = request.form.get('Description')
+        final = f"document: {user_input}\ntokens:"
+        Task = f"Task: Generate job description tokens from the following job description\n"
+        #prompt = Task + descs[0] + descs[1] + final
+        first_shot = "10+ years of software engineering work experience. Technical experience in release automation engineering, CI/CD or related roles. Experience building and leading a software organization through product design, delivery and commercialization of consumer electronics devices. Experience recruiting and managing technical teams, including performance management. BS/MS in Computer Science. Experience in leading timeline, multi-partner initiatives. Organizational communication and coordination experience. PREFERRED 5+ years of experience with hands-on technical management, release engineering, tools engineering, DevOps, or related area.\ntokens:{\n{\ntext: 10+ years\nstart: 0\nend: 9\ntoken_start: 0\ntoken_end: 2\nentityLabel: EXPERIENCE\n}\n{\ntext: software engineering\nstart: 13\nend: 33\ntoken_start: 4\ntoken_end: 5\nentityLabel: SKILLS\n}\n{\ntext: 5+ years\nstart: 515\nend: 523\ntoken_start: 77\ntoken_end: 79\nentityLabel: EXPERIENCE\n}\n{\ntext: technical management\nstart: 552\nend: 572\ntoken_start: 86\ntoken_end: 87\nentityLabel: SKILLS\n}\n{\ntext: release engineering\nstart: 574\nend: 593\ntoken_start: 89\ntoken_end: 90\nentityLabel: SKILLS\n}\n{\ntext: tools engineering\nstart: 595\nend: 612\ntoken_start: 92\ntoken_end: 93\nentityLabel: SKILLS\n}\n{\ntext: DevOps\nstart: 614\nend: 620\ntoken_start: 95\ntoken_end: 95\nentityLabel: SKILLS\n}\n{\ntext: BS/MS\nstart: 361\nend: 366\ntoken_start: 53\ntoken_end: 55\nentityLabel: DIPLOMA\n}\n{\ntext: Computer Science\nstart: 370\nend: 386\ntoken_start: 57\ntoken_end: 58\nentityLabel: DIPLOMA_MAJOR\n}"
+        prompt = Task + first_shot + final
         response = co.generate(
             model='xlarge',
             # based on the item type, we can use the examples from the list, but for now we will use the same example
-            prompt= descs[0] + descs[1] + final,
+            prompt= prompt,
             max_tokens=50,
             temperature=0.9,
             k=0,
@@ -216,10 +219,11 @@ def description_route():
         
         res = response.generations[0].text
         # remove --SEPARATOR-- if x contains it
-        if '--SEPARATOR--' in res:
-            res = res.replace('--SEPARATOR--', '')
-        
-        return jsonify({"status": "success", "job entities": res})
+        #if '--SEPARATOR--' in res:
+        #    res = res.replace('--SEPARATOR--', '')
+        res_final = final + res
+        print(res_final)
+        return render_template('index.html', res_final = res_final)
         # return jsonify({"status": "sucess", "message": "Get Route for items!"})
 
 if __name__ == '__main__':
